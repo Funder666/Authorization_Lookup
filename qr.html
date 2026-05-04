@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>授权查询二维码</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell qr-shell">
+      <header class="hero compact">
+        <div class="hero-copy">
+          <p class="eyebrow">固定入口二维码</p>
+          <h1>将部署后的页面地址生成二维码</h1>
+          <p class="hero-text">
+            GitHub Pages 上线后，只要保持页面 URL 不变，这个二维码就可以长期使用。
+          </p>
+        </div>
+      </header>
+
+      <main class="qr-card">
+        <div class="qr-preview">
+          <img id="qr-image" alt="授权查询二维码" />
+        </div>
+        <div class="qr-info">
+          <p class="meta-title">当前二维码指向</p>
+          <a id="qr-target" class="target-link" href="#"></a>
+          <p class="hint">本地地址仅用于测试。部署到 GitHub Pages 后，请重新打开本页并保存生成的二维码。</p>
+          <div class="actions">
+            <a class="primary-btn inline-btn" href="./index.html">返回查询页</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const rootUrl = new URL("./index.html", window.location.href).toString();
+      const qrTarget = document.getElementById("qr-target");
+      const qrImage = document.getElementById("qr-image");
+      const qrUrl =
+        "https://api.qrserver.com/v1/create-qr-code/?size=720x720&margin=24&data=" +
+        encodeURIComponent(rootUrl);
+
+      qrTarget.href = rootUrl;
+      qrTarget.textContent = rootUrl;
+      qrImage.src = qrUrl;
+    </script>
+  </body>
+</html>

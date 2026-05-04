@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>授权信息查询</title>
+    <meta
+      name="description"
+      content="输入姓名和工号，查询 SR-P-4002 授权台账中的相关授权信息。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">SR-P-4002 授权查询</p>
+          <h1>微信扫码后，输入姓名和工号即可查询授权信息</h1>
+          <p class="hero-text">
+            该页面基于本地 Excel 台账生成，无需后端。适合部署到 GitHub Pages 后长期作为固定二维码入口使用。
+          </p>
+        </div>
+        <div class="hero-panel">
+          <div class="hero-card">
+            <p class="hero-card-label">使用方式</p>
+            <ol class="steps">
+              <li>扫码打开页面</li>
+              <li>输入姓名和工号</li>
+              <li>查看命中的全部授权记录</li>
+            </ol>
+            <a class="qr-link" href="./qr.html">查看二维码页</a>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="search-card">
+          <form id="search-form" class="search-form" autocomplete="off">
+            <label class="field">
+              <span>姓名</span>
+              <input id="name" name="name" type="text" placeholder="例如：王鑫" required />
+            </label>
+            <label class="field">
+              <span>工号</span>
+              <input
+                id="employeeId"
+                name="employeeId"
+                type="text"
+                inputmode="numeric"
+                placeholder="例如：338951"
+                required
+              />
+            </label>
+            <div class="actions">
+              <button type="submit" class="primary-btn">查询授权信息</button>
+              <button type="button" id="reset-btn" class="secondary-btn">清空</button>
+            </div>
+          </form>
+          <p id="query-hint" class="hint">
+            需同时输入姓名和工号；查询结果仅返回两者同时匹配的记录。
+          </p>
+        </section>
+
+        <aside class="meta-card">
+          <p class="meta-title">数据说明</p>
+          <dl id="dataset-meta" class="meta-list"></dl>
+        </aside>
+      </main>
+
+      <section id="summary" class="summary hidden"></section>
+      <section id="results" class="results hidden"></section>
+    </div>
+
+    <template id="result-card-template">
+      <article class="result-card">
+        <div class="result-head">
+          <div>
+            <p class="result-sheet"></p>
+            <h2 class="result-title"></h2>
+          </div>
+          <span class="status-badge"></span>
+        </div>
+        <dl class="field-grid"></dl>
+      </article>
+    </template>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
