@@ -11,7 +11,6 @@ const resetButton = document.getElementById("reset-btn");
 const summary = document.getElementById("summary");
 const results = document.getElementById("results");
 const queryHint = document.getElementById("query-hint");
-const datasetMeta = document.getElementById("dataset-meta");
 const cardTemplate = document.getElementById("result-card-template");
 
 const summaryFields = [
@@ -42,23 +41,6 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
-}
-
-function setMeta(payload) {
-  const generatedAt = new Date(payload.metadata.generatedAt).toLocaleString("zh-CN", {
-    hour12: false,
-  });
-
-  const items = [
-    ["来源文件", payload.metadata.sourceFile],
-    ["记录总数", `${payload.metadata.recordCount} 条`],
-    ["人员数量", `${payload.metadata.personCount} 人`],
-    ["更新时间", generatedAt],
-  ];
-
-  datasetMeta.innerHTML = items
-    .map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`)
-    .join("");
 }
 
 function buildSummary(name, employeeId, records) {
@@ -189,7 +171,7 @@ function handleReset() {
   form.reset();
   summary.classList.add("hidden");
   results.classList.add("hidden");
-  setQueryHint("需同时输入姓名和工号；查询结果仅返回两者同时匹配的记录。");
+  setQueryHint("请输入姓名和工号进行联合查询。");
   syncQueryToUrl("", "");
 }
 
@@ -200,8 +182,6 @@ async function bootstrap() {
   }
 
   state.payload = await response.json();
-  setMeta(state.payload);
-
   const params = new URLSearchParams(window.location.search);
   const name = params.get("name") || "";
   const employeeId = params.get("employeeId") || "";

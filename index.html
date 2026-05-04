@@ -13,32 +13,17 @@
   <body>
     <div class="page-shell">
       <header class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">SR-P-4002 授权查询</p>
-          <h1>微信扫码后，输入姓名和工号即可查询授权信息</h1>
-          <p class="hero-text">
-            该页面基于本地 Excel 台账生成，无需后端。适合部署到 GitHub Pages 后长期作为固定二维码入口使用。
-          </p>
-        </div>
-        <div class="hero-panel">
-          <div class="hero-card">
-            <p class="hero-card-label">使用方式</p>
-            <ol class="steps">
-              <li>扫码打开页面</li>
-              <li>输入姓名和工号</li>
-              <li>查看命中的全部授权记录</li>
-            </ol>
-            <a class="qr-link" href="./qr.html">查看二维码页</a>
-          </div>
+        <div class="hero-copy simple">
+          <h1>授权信息查询</h1>
         </div>
       </header>
 
-      <main class="content-grid">
-        <section class="search-card">
+      <main class="content-single">
+        <section class="search-card compact-card">
           <form id="search-form" class="search-form" autocomplete="off">
             <label class="field">
               <span>姓名</span>
-              <input id="name" name="name" type="text" placeholder="例如：王鑫" required />
+              <input id="name" name="name" type="text" placeholder="请输入姓名" required />
             </label>
             <label class="field">
               <span>工号</span>
@@ -47,24 +32,19 @@
                 name="employeeId"
                 type="text"
                 inputmode="numeric"
-                placeholder="例如：338951"
+                placeholder="请输入工号"
                 required
               />
             </label>
             <div class="actions">
-              <button type="submit" class="primary-btn">查询授权信息</button>
+              <button type="submit" class="primary-btn">查询</button>
               <button type="button" id="reset-btn" class="secondary-btn">清空</button>
             </div>
           </form>
           <p id="query-hint" class="hint">
-            需同时输入姓名和工号；查询结果仅返回两者同时匹配的记录。
+            请输入姓名和工号进行联合查询。
           </p>
         </section>
-
-        <aside class="meta-card">
-          <p class="meta-title">数据说明</p>
-          <dl id="dataset-meta" class="meta-list"></dl>
-        </aside>
       </main>
 
       <section id="summary" class="summary hidden"></section>

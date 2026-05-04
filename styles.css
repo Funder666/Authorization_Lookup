@@ -45,9 +45,8 @@ a {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.4fr 0.9fr;
+  grid-template-columns: 1fr;
   gap: 24px;
-  align-items: stretch;
   margin-bottom: 28px;
 }
 
@@ -56,9 +55,7 @@ a {
 }
 
 .hero-copy,
-.hero-card,
 .search-card,
-.meta-card,
 .result-card,
 .qr-card {
   background: var(--card);
@@ -72,6 +69,11 @@ a {
   padding: 32px;
   position: relative;
   overflow: hidden;
+}
+
+.hero-copy.simple {
+  text-align: center;
+  padding: 28px 24px;
 }
 
 .hero-copy::after {
@@ -107,26 +109,11 @@ h1 {
   line-height: 1.8;
 }
 
-.hero-panel {
-  display: flex;
-}
-
-.hero-card,
 .search-card,
-.meta-card,
 .qr-card {
   border-radius: var(--radius-xl);
 }
 
-.hero-card {
-  width: 100%;
-  padding: 28px;
-  background:
-    linear-gradient(180deg, rgba(255, 250, 243, 0.9), rgba(248, 239, 226, 0.92)),
-    var(--card);
-}
-
-.hero-card-label,
 .meta-title {
   margin: 0 0 14px;
   font-weight: 700;
@@ -146,16 +133,17 @@ h1 {
   word-break: break-all;
 }
 
-.content-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 0.9fr;
-  gap: 24px;
-  align-items: start;
+.content-single {
+  display: flex;
+  justify-content: center;
 }
 
-.search-card,
-.meta-card {
+.search-card {
   padding: 24px;
+}
+
+.compact-card {
+  width: min(100%, 560px);
 }
 
 .search-form {
@@ -226,22 +214,6 @@ h1 {
   color: var(--muted);
   font-size: 0.92rem;
   line-height: 1.7;
-}
-
-.meta-list {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px 16px;
-  margin: 0;
-}
-
-.meta-list dt {
-  color: var(--muted);
-}
-
-.meta-list dd {
-  margin: 0;
-  font-weight: 700;
 }
 
 .summary {
@@ -370,7 +342,6 @@ h1 {
 
 @media (max-width: 860px) {
   .hero,
-  .content-grid,
   .qr-card {
     grid-template-columns: 1fr;
   }
@@ -386,9 +357,7 @@ h1 {
   }
 
   .hero-copy,
-  .hero-card,
   .search-card,
-  .meta-card,
   .qr-card {
     padding: 20px;
   }
