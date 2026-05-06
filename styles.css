@@ -26,11 +26,36 @@ body {
 }
 
 body {
+  position: relative;
   color: var(--text);
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.65), transparent 24%),
-    linear-gradient(140deg, #f6efe7 0%, #efe6d8 45%, #e4d3bb 100%);
+    linear-gradient(180deg, rgba(157, 207, 248, 0.96) 0%, rgba(122, 187, 238, 0.92) 58%, rgba(228, 209, 177, 0.76) 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.34), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 16%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16), transparent 14%, transparent 86%, rgba(255, 255, 255, 0.16)),
+    linear-gradient(180deg, rgba(117, 179, 233, 0.24), rgba(117, 179, 233, 0.08) 60%, rgba(218, 195, 153, 0.26));
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(155, 35, 26, 0.66), rgba(155, 35, 26, 0.08)) 7% 12% / 9% 54% no-repeat,
+    linear-gradient(180deg, rgba(211, 165, 91, 0.7), rgba(211, 165, 91, 0.08)) 20% 26% / 9% 46% no-repeat,
+    radial-gradient(ellipse at bottom, rgba(91, 124, 97, 0.46), transparent 40%) 50% 95% / 100% 26% no-repeat,
+    radial-gradient(circle at 54% 23%, rgba(255, 255, 255, 0.2), transparent 7%);
 }
 
 a {
@@ -56,6 +81,7 @@ a {
 
 .hero-copy,
 .search-card,
+.summary,
 .result-card,
 .qr-card {
   background: var(--card);
@@ -97,7 +123,7 @@ a {
 
 h1 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-size: clamp(1.85rem, 3.4vw, 2.8rem);
   line-height: 1.1;
 }
 
@@ -212,22 +238,18 @@ h1 {
 .hint {
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.7;
+  font-size: 0.85rem;
+  line-height: 1.65;
 }
 
 .summary {
   margin-top: 24px;
-  padding: 20px 24px;
+  padding: 18px 24px;
   border-radius: var(--radius-lg);
-  background: rgba(255, 250, 243, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: var(--shadow);
 }
 
 .summary strong {
   display: block;
-  margin-bottom: 8px;
   font-size: 1.08rem;
 }
 
@@ -249,12 +271,6 @@ h1 {
   align-items: flex-start;
   border-bottom: 1px solid var(--line);
   padding-bottom: 16px;
-}
-
-.result-sheet {
-  margin: 0 0 8px;
-  color: var(--primary);
-  font-size: 0.9rem;
 }
 
 .result-title {
@@ -286,9 +302,9 @@ h1 {
 }
 
 .field-grid div {
-  padding: 12px 14px;
+  padding: 14px 15px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.56);
+  background: rgba(255, 255, 255, 0.62);
 }
 
 .field-grid dt {

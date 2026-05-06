@@ -14,24 +14,46 @@ const queryHint = document.getElementById("query-hint");
 const cardTemplate = document.getElementById("result-card-template");
 
 const summaryFields = [
-  "部门",
   "授权级别类",
   "授权类级别",
   "授权岗位",
   "授权项目",
-  "机型/ATA章节",
-  "机型",
-  "授权范围",
-  "授权证书号",
+  "种类",
+  "编号",
   "起止日期",
   "工卡批准起止日期",
-  "授权状态",
-  "备注",
+  "机型/ATA章节",
+  "机型",
+  "授权证书号",
+  "授权专业/件号",
+  "授权范围",
   "执照",
+  "放行经历",
+  "调动",
+  "离职",
+  "撤销",
+  "损坏",
+  "日期",
+  "日期1",
+  "日期2",
+  "备注",
 ];
+
+const hiddenFields = new Set([
+  "序号",
+  "姓名",
+  "工号",
+  "部门",
+  "授权状态",
+  "授权转换日期",
+]);
 
 function normalize(value) {
   return String(value || "").trim().replace(/\s+/g, "");
+}
+
+function displayValue(value) {
+  return String(value || "").trim();
 }
 
 function escapeHtml(value) {
@@ -44,40 +66,57 @@ function escapeHtml(value) {
 }
 
 function buildSummary(name, employeeId, records) {
-  const sheets = [...new Set(records.map((record) => record.sheet))];
+  const department = records.find((record) => displayValue(record.fields["部门"]))?.fields["部门"] || "";
   summary.innerHTML = `
-    <strong>${escapeHtml(name)} / ${escapeHtml(employeeId)}</strong>
-    命中 ${records.length} 条记录，分布于 ${sheets.length} 个 sheet：${escapeHtml(sheets.join("、"))}
+    <strong>${escapeHtml(name)} / ${escapeHtml(employeeId)}${
+      department ? ` / ${escapeHtml(department)}` : ""
+    }</strong>
   `;
   summary.classList.remove("hidden");
 }
 
 function buildFieldEntries(fields) {
-  return Object.entries(fields).filter(([, value]) => String(value || "").trim() !== "");
+  return Object.entries(fields).filter(([label, value]) => {
+    const text = displayValue(value);
+    return text !== "" && text !== "/" && text !== "／" && !hiddenFields.has(label);
+  });
+}
+
+function getRecordTitle(record) {
+  const fields = record.fields;
+  if (record.sheet === "受控印章清册") {
+    return "受控印章";
+  }
+
+  return (
+    fields["授权岗位"] ||
+    fields["授权项目"] ||
+    fields["授权级别类"] ||
+    fields["授权类级别"] ||
+    record.sheet ||
+    "授权记录"
+  );
 }
 
 function buildResultCard(record) {
   const fragment = cardTemplate.content.cloneNode(true);
   const card = fragment.querySelector(".result-card");
-  const sheet = fragment.querySelector(".result-sheet");
   const title = fragment.querySelector(".result-title");
   const badge = fragment.querySelector(".status-badge");
   const grid = fragment.querySelector(".field-grid");
 
   const fields = record.fields;
-  const status = fields["授权状态"] || "未标注";
-  const titleText =
-    fields["授权岗位"] ||
-    fields["授权项目"] ||
-    fields["授权级别类"] ||
-    fields["授权类级别"] ||
-    "授权记录";
+  const status = displayValue(fields["授权状态"]);
+  const titleText = getRecordTitle(record);
 
-  sheet.textContent = `${record.sheet} · 第 ${record.rowNumber} 行`;
   title.textContent = titleText;
-  badge.textContent = status;
-  if (status !== "有效") {
-    badge.classList.add("warn");
+  if (status) {
+    badge.textContent = status;
+    if (status !== "有效") {
+      badge.classList.add("warn");
+    }
+  } else {
+    badge.remove();
   }
 
   const entries = buildFieldEntries(fields).sort((a, b) => {
@@ -162,7 +201,9 @@ function handleSearch(event) {
   }
 
   const matched = searchRecords(name, employeeId);
-  setQueryHint("查询结果仅返回姓名与工号同时匹配的记录。");
+  setQueryHint(
+    "授权信息查询依据内网SR-P-4002《人员授权清单》。本查询结果的最终解释权归属质量安全培训部维修质量室所有。"
+  );
   syncQueryToUrl(name, employeeId);
   renderRecords(name, employeeId, matched);
 }
@@ -171,7 +212,9 @@ function handleReset() {
   form.reset();
   summary.classList.add("hidden");
   results.classList.add("hidden");
-  setQueryHint("请输入姓名和工号进行联合查询。");
+  setQueryHint(
+    "授权信息查询依据内网SR-P-4002《人员授权清单》。本查询结果的最终解释权归属质量安全培训部维修质量室所有。"
+  );
   syncQueryToUrl("", "");
 }
 
