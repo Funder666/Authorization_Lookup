@@ -34,7 +34,7 @@ jobs:
       - name: Prepare artifact
         run: |
           mkdir -p dist
-          cp index.html app.js styles.css qr.html dist/
+          cp index.html app.js styles.css qr.html background.jpg dist/
           cp -R data dist/data
 
       - name: Upload Pages artifact
