@@ -14,14 +14,14 @@ const queryHint = document.getElementById("query-hint");
 const cardTemplate = document.getElementById("result-card-template");
 
 const summaryFields = [
+  "起止日期",
+  "工卡批准起止日期",
   "授权级别类",
   "授权类级别",
   "授权岗位",
   "授权项目",
   "种类",
   "编号",
-  "起止日期",
-  "工卡批准起止日期",
   "机型/ATA章节",
   "机型",
   "授权证书号",
@@ -67,10 +67,12 @@ function escapeHtml(value) {
 
 function buildSummary(name, employeeId, records) {
   const department = records.find((record) => displayValue(record.fields["部门"]))?.fields["部门"] || "";
+  const sheets = [...new Set(records.map((record) => getRecordTitle(record)))];
   summary.innerHTML = `
     <strong>${escapeHtml(name)} / ${escapeHtml(employeeId)}${
       department ? ` / ${escapeHtml(department)}` : ""
     }</strong>
+    ${escapeHtml(sheets.join("、"))}
   `;
   summary.classList.remove("hidden");
 }
@@ -106,17 +108,13 @@ function buildResultCard(record) {
   const grid = fragment.querySelector(".field-grid");
 
   const fields = record.fields;
-  const status = displayValue(fields["授权状态"]);
+  const status = displayValue(fields["授权状态"]) || "有效";
   const titleText = getRecordTitle(record);
 
   title.textContent = titleText;
-  if (status) {
-    badge.textContent = status;
-    if (status !== "有效") {
-      badge.classList.add("warn");
-    }
-  } else {
-    badge.remove();
+  badge.textContent = status;
+  if (status !== "有效") {
+    badge.classList.add("warn");
   }
 
   const entries = buildFieldEntries(fields).sort((a, b) => {
