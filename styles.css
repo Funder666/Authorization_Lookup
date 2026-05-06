@@ -29,8 +29,7 @@ body {
   position: relative;
   color: var(--text);
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
-  background:
-    linear-gradient(180deg, rgba(157, 207, 248, 0.96) 0%, rgba(122, 187, 238, 0.92) 58%, rgba(228, 209, 177, 0.76) 100%);
+  background: #dbe9f8;
 }
 
 body::before {
@@ -39,10 +38,8 @@ body::before {
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.34), transparent 18%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 16%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.16), transparent 14%, transparent 86%, rgba(255, 255, 255, 0.16)),
-    linear-gradient(180deg, rgba(117, 179, 233, 0.24), rgba(117, 179, 233, 0.08) 60%, rgba(218, 195, 153, 0.26));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.18)),
+    url("./background.jpg") center top / cover no-repeat;
 }
 
 body::after {
@@ -52,10 +49,7 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(155, 35, 26, 0.66), rgba(155, 35, 26, 0.08)) 7% 12% / 9% 54% no-repeat,
-    linear-gradient(180deg, rgba(211, 165, 91, 0.7), rgba(211, 165, 91, 0.08)) 20% 26% / 9% 46% no-repeat,
-    radial-gradient(ellipse at bottom, rgba(91, 124, 97, 0.46), transparent 40%) 50% 95% / 100% 26% no-repeat,
-    radial-gradient(circle at 54% 23%, rgba(255, 255, 255, 0.2), transparent 7%);
+    linear-gradient(180deg, rgba(243, 247, 252, 0.24), rgba(244, 235, 221, 0.52) 62%, rgba(244, 235, 221, 0.7) 100%);
 }
 
 a {
