@@ -12,10 +12,16 @@ const summary = document.getElementById("summary");
 const results = document.getElementById("results");
 const queryHint = document.getElementById("query-hint");
 const cardTemplate = document.getElementById("result-card-template");
+const DEFAULT_HINT =
+  "授权信息查询依据内网SR-P-4002《人员授权清单》。本查询结果的最终解释权归属质量安全培训部维修质量室所有。";
 
 const summaryFields = [
   "起止日期",
   "工卡批准起止日期",
+  "发放日期",
+  "更换日期",
+  "更换日期2",
+  "遗失",
   "授权级别类",
   "授权类级别",
   "授权岗位",
@@ -29,13 +35,11 @@ const summaryFields = [
   "授权范围",
   "执照",
   "放行经历",
-  "调动",
-  "离职",
-  "撤销",
-  "损坏",
-  "日期",
-  "日期1",
-  "日期2",
+  "调动收回",
+  "离职收回",
+  "撤销收回",
+  "损坏收回",
+  "印章状态",
   "备注",
 ];
 
@@ -45,6 +49,7 @@ const hiddenFields = new Set([
   "工号",
   "部门",
   "授权状态",
+  "印章状态",
   "授权转换日期",
 ]);
 
@@ -68,10 +73,9 @@ function escapeHtml(value) {
 function buildSummary(name, employeeId, records) {
   const department = records.find((record) => displayValue(record.fields["部门"]))?.fields["部门"] || "";
   const sheets = [...new Set(records.map((record) => getRecordTitle(record)))];
+  const head = [name, employeeId, department].filter(Boolean).map(escapeHtml).join(" / ");
   summary.innerHTML = `
-    <strong>${escapeHtml(name)} / ${escapeHtml(employeeId)}${
-      department ? ` / ${escapeHtml(department)}` : ""
-    }</strong>
+    <strong>${head}</strong>
     ${escapeHtml(sheets.join("、"))}
   `;
   summary.classList.remove("hidden");
@@ -108,7 +112,10 @@ function buildResultCard(record) {
   const grid = fragment.querySelector(".field-grid");
 
   const fields = record.fields;
-  const status = displayValue(fields["授权状态"]) || "有效";
+  const status =
+    (record.sheet === "受控印章清册"
+      ? displayValue(fields["印章状态"])
+      : displayValue(fields["授权状态"])) || "有效";
   const titleText = getRecordTitle(record);
 
   title.textContent = titleText;
@@ -138,11 +145,10 @@ function buildResultCard(record) {
 
 function renderRecords(name, employeeId, records) {
   results.innerHTML = "";
+  const queryText = [name, employeeId].filter(Boolean).map(escapeHtml).join(" / ");
 
   if (!records.length) {
-    summary.innerHTML = `<strong>未查询到结果</strong>请确认姓名与工号是否同时准确，当前查询：${escapeHtml(
-      name
-    )} / ${escapeHtml(employeeId)}`;
+    summary.innerHTML = `<strong>未查询到结果</strong>请确认输入信息是否准确，当前查询：${queryText}`;
     summary.classList.remove("hidden");
     results.classList.add("hidden");
     return;
@@ -157,13 +163,26 @@ function renderRecords(name, employeeId, records) {
 function searchRecords(name, employeeId) {
   const normalizedName = normalize(name);
   const normalizedEmployeeId = normalize(employeeId);
+  let records = state.payload.records;
 
-  return state.payload.records.filter((record) => {
-    return (
-      normalize(record.fields["姓名"]) === normalizedName &&
-      normalize(record.fields["工号"]) === normalizedEmployeeId
-    );
-  });
+  if (normalizedName) {
+    records = records.filter((record) => normalize(record.fields["姓名"]) === normalizedName);
+  }
+  if (normalizedEmployeeId) {
+    records = records.filter((record) => normalize(record.fields["工号"]) === normalizedEmployeeId);
+  }
+
+  if (normalizedName && !normalizedEmployeeId) {
+    const employeeIds = [...new Set(records.map((record) => displayValue(record.fields["工号"])).filter(Boolean))];
+    if (employeeIds.length > 1) {
+      return {
+        records: [],
+        error: "查询到重名人员，请继续输入工号后再查询。",
+      };
+    }
+  }
+
+  return { records, error: "" };
 }
 
 function setQueryHint(message, isError = false) {
@@ -191,17 +210,23 @@ function handleSearch(event) {
   const name = nameInput.value.trim();
   const employeeId = employeeIdInput.value.trim();
 
-  if (!name || !employeeId) {
-    setQueryHint("请同时输入姓名和工号。", true);
+  if (!name && !employeeId) {
+    setQueryHint("请至少输入姓名或工号。", true);
     summary.classList.add("hidden");
     results.classList.add("hidden");
     return;
   }
 
-  const matched = searchRecords(name, employeeId);
-  setQueryHint(
-    "授权信息查询依据内网SR-P-4002《人员授权清单》。本查询结果的最终解释权归属质量安全培训部维修质量室所有。"
-  );
+  const { records: matched, error } = searchRecords(name, employeeId);
+  if (error) {
+    setQueryHint(error, true);
+    summary.classList.add("hidden");
+    results.classList.add("hidden");
+    syncQueryToUrl(name, employeeId);
+    return;
+  }
+
+  setQueryHint(DEFAULT_HINT);
   syncQueryToUrl(name, employeeId);
   renderRecords(name, employeeId, matched);
 }
@@ -210,9 +235,7 @@ function handleReset() {
   form.reset();
   summary.classList.add("hidden");
   results.classList.add("hidden");
-  setQueryHint(
-    "授权信息查询依据内网SR-P-4002《人员授权清单》。本查询结果的最终解释权归属质量安全培训部维修质量室所有。"
-  );
+  setQueryHint(DEFAULT_HINT);
   syncQueryToUrl("", "");
 }
 
@@ -232,8 +255,13 @@ async function bootstrap() {
   if (employeeId) {
     employeeIdInput.value = employeeId;
   }
-  if (name && employeeId) {
-    renderRecords(name, employeeId, searchRecords(name, employeeId));
+  if (name || employeeId) {
+    const { records, error } = searchRecords(name, employeeId);
+    if (error) {
+      setQueryHint(error, true);
+    } else {
+      renderRecords(name, employeeId, records);
+    }
   }
 }
 

@@ -85,10 +85,12 @@ def find_header_row(parsed_rows):
 
 def build_headers(header_values):
     headers = {}
+    seen = defaultdict(int)
     for index, title in header_values.items():
         normalized = clean_text(title)
         if normalized:
-            headers[index] = normalized
+            seen[normalized] += 1
+            headers[index] = normalized if seen[normalized] == 1 else f"{normalized}{seen[normalized]}"
     return headers
 
 
