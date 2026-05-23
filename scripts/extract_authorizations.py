@@ -70,7 +70,7 @@ def parse_rows(sheet_root, shared_strings):
         values = {}
         for cell in row.findall("a:c", NS):
             values[column_index(cell.attrib.get("r", ""))] = clean_text(cell_value(cell, shared_strings))
-        if values:
+        if any(clean_text(value) for value in values.values()):
             rows.append((int(row.attrib.get("r", "0")), values))
     return rows
 

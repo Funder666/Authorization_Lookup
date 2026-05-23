@@ -71,9 +71,12 @@ function escapeHtml(value) {
 }
 
 function buildSummary(name, employeeId, records) {
-  const department = records.find((record) => displayValue(record.fields["部门"]))?.fields["部门"] || "";
+  const firstRecord = records[0]?.fields || {};
+  const personName = displayValue(firstRecord["姓名"]) || name;
+  const personEmployeeId = displayValue(firstRecord["工号"]) || employeeId;
+  const department = displayValue(firstRecord["部门"]);
   const sheets = [...new Set(records.map((record) => getRecordTitle(record)))];
-  const head = [name, employeeId, department].filter(Boolean).map(escapeHtml).join(" / ");
+  const head = [personName, personEmployeeId, department].filter(Boolean).map(escapeHtml).join(" / ");
   summary.innerHTML = `
     <strong>${head}</strong>
     ${escapeHtml(sheets.join("、"))}
